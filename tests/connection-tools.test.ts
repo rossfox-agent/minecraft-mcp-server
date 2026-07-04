@@ -186,3 +186,28 @@ test('connect-server returns connecting when state is connecting', async (t) => 
   const result = await handler({});
   t.is((result as { content: Array<{ text: string }> }).content[0].text, 'Bot is already connecting');
 });
+
+test('connect-server accepts host and port arguments', async (t) => {
+  const config = { host: 'localhost', port: 25565, username: 'TestBot' };
+  const callbacks = { onLog: sinon.stub(), onChatMessage: sinon.stub() };
+  const connection = new BotConnection(config, callbacks);
+  const factory = createFactory(connection);
+
+  registerConnectionTools(factory, connection, () => null);
+
+  const connectSpy = sinon.stub(connection, 'connect');
+
+  const handler = getToolHandler(factory, 'connect-server');
+  const result = await handler({ host: 'mc.example.com', port: 30001, username: 'NewBot' });
+  const text = (result as { content: Array<{ text: string }> }).content[0].text;
+  t.true(text.includes('mc.example.com:30001'));
+  t.true(text.includes('NewBot'));
+  t.true(connectSpy.calledOnce);
+
+  const newConfig = connection.getConfig();
+  t.is(newConfig.host, 'mc.example.com');
+  t.is(newConfig.port, 30001);
+  t.is(newConfig.username, 'NewBot');
+
+  connectSpy.restore();
+});

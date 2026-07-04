@@ -6,9 +6,14 @@ import { BotConnection } from '../bot-connection.js';
 export function registerConnectionTools(factory: ToolFactory, connection: BotConnection, getBot: () => mineflayer.Bot | null): void {
   factory.registerConnectionTool(
     "connect-server",
-    "Connect the bot to the configured Minecraft server",
-    {},
-    async () => {
+    "Connect the bot to a Minecraft server. Uses provided host/port/username/version or falls back to env/config defaults.",
+    {
+      host: z.string().optional().describe("Minecraft server host (default: configured)"),
+      port: z.number().optional().describe("Minecraft server port (default: configured)"),
+      username: z.string().optional().describe("Bot username (default: configured)"),
+      version: z.string().optional().describe("Minecraft version (default: configured)")
+    },
+    async ({ host, port, username, version }) => {
       const state = connection.getState();
       if (state === 'connected') {
         return factory.createResponse("Bot is already connected");
@@ -16,8 +21,20 @@ export function registerConnectionTools(factory: ToolFactory, connection: BotCon
       if (state === 'connecting') {
         return factory.createResponse("Bot is already connecting");
       }
+      const currentConfig = connection.getConfig();
+      const updates: any = {};
+      if (host !== undefined && host !== currentConfig.host) updates.host = host;
+      if (port !== undefined && port !== currentConfig.port) updates.port = port;
+      if (username !== undefined && username !== currentConfig.username) updates.username = username;
+      if (version !== undefined && version !== (currentConfig as any).version) updates.version = version;
+
+      if (Object.keys(updates).length > 0) {
+        connection.setConfig(updates);
+      }
+
       connection.connect();
-      return factory.createResponse("Connecting to Minecraft server...");
+      const target = connection.getConfig();
+      return factory.createResponse(`Connecting to ${target.host}:${target.port} as ${target.username}...`);
     }
   );
 
