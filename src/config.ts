@@ -30,7 +30,7 @@ export function parseConfig(): ServerConfig {
     .option('version', {
       type: 'string',
       description: 'Minecraft version',
-      default: '1.21.1'
+      default: '1.21.11'
     })
     .option('auth', {
       type: 'string',
