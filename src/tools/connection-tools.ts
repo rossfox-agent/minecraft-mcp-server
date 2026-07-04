@@ -6,14 +6,15 @@ import { BotConnection } from '../bot-connection.js';
 export function registerConnectionTools(factory: ToolFactory, connection: BotConnection, getBot: () => mineflayer.Bot | null): void {
   factory.registerConnectionTool(
     "connect-server",
-    "Connect the bot to a Minecraft server. Uses provided host/port/username/version or falls back to env/config defaults.",
+    "Connect the bot to a Minecraft server. Uses provided host/port/username/version/auth or falls back to env/config defaults.",
     {
       host: z.string().optional().describe("Minecraft server host (default: configured)"),
       port: z.number().optional().describe("Minecraft server port (default: configured)"),
       username: z.string().optional().describe("Bot username (default: configured)"),
-      version: z.string().optional().describe("Minecraft version (default: configured)")
+      version: z.string().optional().describe("Minecraft version (default: configured)"),
+      auth: z.enum(['offline', 'mojang', 'microsoft']).optional().describe("Authentication mode (default: offline)")
     },
-    async ({ host, port, username, version }) => {
+    async ({ host, port, username, version, auth }) => {
       const state = connection.getState();
       if (state === 'connected') {
         return factory.createResponse("Bot is already connected");
@@ -27,6 +28,7 @@ export function registerConnectionTools(factory: ToolFactory, connection: BotCon
       if (port !== undefined && port !== currentConfig.port) updates.port = port;
       if (username !== undefined && username !== currentConfig.username) updates.username = username;
       if (version !== undefined && version !== (currentConfig as any).version) updates.version = version;
+      if (auth !== undefined && auth !== (currentConfig as any).auth) updates.auth = auth;
 
       if (Object.keys(updates).length > 0) {
         connection.setConfig(updates);
