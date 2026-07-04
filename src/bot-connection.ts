@@ -12,6 +12,8 @@ interface BotConfig {
   port: number;
   username: string;
   version?: string;
+  auth?: 'offline' | 'mojang' | 'microsoft';
+  limboPassword?: string;
 }
 
 interface ConnectionCallbacks {
@@ -60,13 +62,16 @@ export class BotConnection {
       return;
     }
 
-    const botOptions = {
+    const botOptions: any = {
       host: this.config.host,
       port: this.config.port,
       username: this.config.username,
       version: this.config.version,
       plugins: { pathfinder },
     };
+    if (this.config.auth) {
+      botOptions.auth = this.config.auth;
+    }
 
     this.bot = mineflayer.createBot(botOptions);
     this.state = 'connecting';
@@ -115,6 +120,19 @@ export class BotConnection {
       this.callbacks.onLog('error', `Bot was kicked from server: ${this.formatError(reason)}`);
       this.state = 'disconnected';
       bot.quit();
+    });
+
+    bot.on('messagestr', (msg: string, pos: string) => {
+      if (pos === 'system' && msg.includes('/register')) {
+        const password = (this.config as any).limboPassword || 'RossBot123!';
+        this.callbacks.onLog('info', `Detected /register prompt in limbo. Auto-registering...`);
+        bot.chat(`/register ${password} ${password}`);
+      }
+      if (pos === 'system' && msg.includes('/login')) {
+        const password = (this.config as any).limboPassword || 'RossBot123!';
+        this.callbacks.onLog('info', `Detected /login prompt in limbo. Auto-logging in...`);
+        bot.chat(`/login ${password}`);
+      }
     });
 
     bot.on('error', (err) => {
