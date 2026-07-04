@@ -83,6 +83,7 @@ test('registerCraftingTools registers all 4 tools', (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -105,6 +106,7 @@ test('can-craft with empty inventory returns missing items', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -136,6 +138,7 @@ test('get-recipe returns recipe structure for valid item', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -179,6 +182,7 @@ test('list-recipes returns proper structure', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -212,6 +216,7 @@ test('craft-item returns error when recipe not available', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -254,7 +259,10 @@ test('craft-item crafts successfully when ingredients are available', async (t) 
   const inventoryItems = Object.entries(ingredientCounts).map(([name, count], idx) => ({ name, count, slot: idx }));
 
   const mockServer = { tool: sinon.stub() } as unknown as McpServer;
-  const mockConnection = { checkConnectionAndReconnect: sinon.stub().resolves({ connected: true }) } as unknown as BotConnection;
+  const mockConnection = {
+    checkConnectionAndReconnect: sinon.stub().resolves({ connected: true }),
+    isConnected: sinon.stub().returns(true)
+  } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
 
   const craftStub = sinon.stub().resolves();

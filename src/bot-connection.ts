@@ -45,11 +45,20 @@ export class BotConnection {
     return this.config;
   }
 
+  setConfig(config: Partial<BotConfig>): void {
+    this.config = { ...this.config, ...config };
+  }
+
   isConnected(): boolean {
     return this.state === 'connected';
   }
 
   connect(): void {
+    if (this.state === 'connected' || this.state === 'connecting') {
+      this.callbacks.onLog('warn', `Already ${this.state}, skipping connect()`);
+      return;
+    }
+
     const botOptions = {
       host: this.config.host,
       port: this.config.port,
@@ -62,6 +71,24 @@ export class BotConnection {
     this.isReconnecting = false;
 
     this.registerEventHandlers(this.bot);
+  }
+
+  disconnect(): void {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    if (this.bot) {
+      try {
+        this.bot.removeAllListeners();
+        this.bot.quit('Manual disconnect');
+      } catch (err) {
+        this.callbacks.onLog('warn', `Error during manual disconnect: ${this.formatError(err)}`);
+      }
+      this.bot = null;
+    }
+    this.state = 'disconnected';
+    this.callbacks.onLog('info', 'Bot manually disconnected');
   }
 
   private registerEventHandlers(bot: mineflayer.Bot): void {

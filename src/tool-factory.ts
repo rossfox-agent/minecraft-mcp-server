@@ -22,15 +22,32 @@ export class ToolFactory {
     executor: (args: any) => Promise<McpResponse>
   ): void {
     this.server.tool(name, description, schema, async (args: unknown): Promise<McpResponse> => {
-      const connectionCheck = await this.connection.checkConnectionAndReconnect();
-
-      if (!connectionCheck.connected) {
+      if (!this.connection.isConnected()) {
         return {
-          content: [{ type: "text", text: connectionCheck.message! }],
+          content: [{ type: "text", text: "Bot is not connected. Use connect-server to connect first." }],
           isError: true
         };
       }
 
+      try {
+        const parsedArgs = this.shouldValidateSchema(schema)
+          ? this.parseArgs(schema as ZodRawShape, args)
+          : args;
+        return await executor(parsedArgs);
+      } catch (error) {
+        return this.createErrorResponse(error as Error);
+      }
+    });
+  }
+
+  registerConnectionTool(
+    name: string,
+    description: string,
+    schema: Record<string, unknown>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    executor: (args: any) => Promise<McpResponse>
+  ): void {
+    this.server.tool(name, description, schema, async (args: unknown): Promise<McpResponse> => {
       try {
         const parsedArgs = this.shouldValidateSchema(schema)
           ? this.parseArgs(schema as ZodRawShape, args)

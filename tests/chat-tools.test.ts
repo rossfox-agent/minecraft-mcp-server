@@ -12,6 +12,7 @@ test('registerChatTools registers send-chat tool', (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -33,6 +34,7 @@ test('registerChatTools registers read-chat tool', (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -54,6 +56,7 @@ test('send-chat calls bot.chat with message', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -81,6 +84,7 @@ test('read-chat returns no messages when empty', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -105,6 +109,7 @@ test('read-chat returns formatted messages', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -136,6 +141,7 @@ test('read-chat respects count parameter', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -164,6 +170,7 @@ test('read-chat limits count to max messages', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);

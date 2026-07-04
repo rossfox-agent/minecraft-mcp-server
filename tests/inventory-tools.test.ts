@@ -11,6 +11,7 @@ test('registerInventoryTools registers list-inventory tool', (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -31,6 +32,7 @@ test('registerInventoryTools registers equip-item tool', (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -51,6 +53,7 @@ test('list-inventory returns empty when no items', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -78,6 +81,7 @@ test('list-inventory returns items with counts', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -110,6 +114,7 @@ test('equip-item calls bot.equip', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -143,6 +148,7 @@ test('equip-item returns message when item not found', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);

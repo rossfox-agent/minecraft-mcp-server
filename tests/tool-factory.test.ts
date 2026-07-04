@@ -6,7 +6,8 @@ import type { BotConnection } from '../src/bot-connection.js';
 
 test('createResponse returns proper MCP response format', (t) => {
   const mockServer = {} as McpServer;
-  const mockConnection = {} as BotConnection;
+  const mockConnection = {
+    isConnected: sinon.stub().returns(true),} as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
   
   const response = factory.createResponse('Test message');
@@ -18,7 +19,8 @@ test('createResponse returns proper MCP response format', (t) => {
 
 test('createResponse handles empty string', (t) => {
   const mockServer = {} as McpServer;
-  const mockConnection = {} as BotConnection;
+  const mockConnection = {
+    isConnected: sinon.stub().returns(true),} as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
   
   const response = factory.createResponse('');
@@ -30,7 +32,8 @@ test('createResponse handles empty string', (t) => {
 
 test('createErrorResponse with Error object', (t) => {
   const mockServer = {} as McpServer;
-  const mockConnection = {} as BotConnection;
+  const mockConnection = {
+    isConnected: sinon.stub().returns(true),} as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
   
   const error = new Error('Connection timeout');
@@ -44,7 +47,8 @@ test('createErrorResponse with Error object', (t) => {
 
 test('createErrorResponse with string', (t) => {
   const mockServer = {} as McpServer;
-  const mockConnection = {} as BotConnection;
+  const mockConnection = {
+    isConnected: sinon.stub().returns(true),} as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
   
   const response = factory.createErrorResponse('Invalid argument');
@@ -57,7 +61,8 @@ test('createErrorResponse with string', (t) => {
 
 test('createErrorResponse includes isError flag', (t) => {
   const mockServer = {} as McpServer;
-  const mockConnection = {} as BotConnection;
+  const mockConnection = {
+    isConnected: sinon.stub().returns(true),} as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
   
   const response = factory.createErrorResponse('Error occurred');
@@ -70,6 +75,7 @@ test('registerTool calls server.tool with correct parameters', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   
@@ -90,7 +96,7 @@ test('registerTool executor checks connection before executing', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
-    checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
+    isConnected: sinon.stub().returns(true),
   } as unknown as BotConnection;
   
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -101,7 +107,7 @@ test('registerTool executor checks connection before executing', async (t) => {
   const registeredExecutor = (mockServer.tool as sinon.SinonStub).firstCall.args[3];
   await registeredExecutor({ arg: 'value' });
   
-  t.true((mockConnection.checkConnectionAndReconnect as sinon.SinonStub).calledOnce);
+  t.true((mockConnection.isConnected as sinon.SinonStub).calledOnce);
 });
 
 test('registerTool executor returns error when not connected', async (t) => {
@@ -109,10 +115,7 @@ test('registerTool executor returns error when not connected', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
-    checkConnectionAndReconnect: sinon.stub().resolves({ 
-      connected: false, 
-      message: 'Bot is not connected' 
-    })
+    isConnected: sinon.stub().returns(false),
   } as unknown as BotConnection;
   
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -124,7 +127,7 @@ test('registerTool executor returns error when not connected', async (t) => {
   const response = await registeredExecutor({ arg: 'value' });
   
   t.deepEqual(response, {
-    content: [{ type: 'text', text: 'Bot is not connected' }],
+    content: [{ type: 'text', text: 'Bot is not connected. Use connect-server to connect first.' }],
     isError: true
   });
   t.true((executor as sinon.SinonStub).notCalled);
@@ -135,6 +138,7 @@ test('registerTool executor calls executor when connected', async (t) => {
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   
@@ -155,6 +159,7 @@ test('registerTool executor returns executor result when successful', async (t) 
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   
@@ -175,6 +180,7 @@ test('registerTool executor catches and returns error response on exception', as
     tool: sinon.stub()
   } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   

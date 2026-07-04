@@ -19,6 +19,7 @@ const createMockItem = (fields: {
 test('registerFurnaceTools registers smelt-item tool', (t) => {
   const mockServer = { tool: sinon.stub() } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -36,6 +37,7 @@ test('registerFurnaceTools registers smelt-item tool', (t) => {
 test('smelt-item returns error when no furnace block found', async (t) => {
   const mockServer = { tool: sinon.stub() } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -65,6 +67,7 @@ test('smelt-item returns error when no furnace block found', async (t) => {
 test('smelt-item loads input and fuel and takes output', async (t) => {
   const mockServer = { tool: sinon.stub() } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
@@ -122,6 +125,7 @@ test('smelt-item loads input and fuel and takes output', async (t) => {
 test('smelt-item returns validation error for non-positive counts', async (t) => {
   const mockServer = { tool: sinon.stub() } as unknown as McpServer;
   const mockConnection = {
+    isConnected: sinon.stub().returns(true),
     checkConnectionAndReconnect: sinon.stub().resolves({ connected: true })
   } as unknown as BotConnection;
   const factory = new ToolFactory(mockServer, mockConnection);
